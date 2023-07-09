@@ -1,11 +1,11 @@
 import * as esbuild from "esbuild-wasm";
-import { Service } from "esbuild-wasm";
 import { useState, useEffect, useRef } from "react";
+import { unpkgPathPlugin } from "./plugins/unpgk-path-plugin";
 
 const App: React.FC = () => {
   const [input, setInput] = useState("");
-  const [code, setCode] = useState("");
-  const ref = useRef<Service>();
+  const [code, setCode] = useState<esbuild.OutputFile[]>([]);
+  const ref = useRef<esbuild.Service>();
 
   const startService = async () => {
     ref.current = await esbuild.startService({
@@ -23,12 +23,16 @@ const App: React.FC = () => {
       return;
     }
 
-    const result = await ref.current.transform(input, {
-      loader: "jsx",
-      target: "es2015",
+    const result = await ref.current.build({
+      entryPoints: ["index.js"],
+      bundle: true,
+      write: false,
+      plugins: [unpkgPathPlugin()],
     });
 
-    setCode(result.code);
+    console.log(result);
+
+    setCode(result.outputFiles);
   };
 
   return (
@@ -42,7 +46,11 @@ const App: React.FC = () => {
       <div>
         <button onClick={onClick}>Submit</button>
       </div>
-      <pre>{code}</pre>
+      <pre>
+        {code.map((item) => {
+          return <div key={item.path}>{item.text}</div>;
+        })}
+      </pre>
     </>
   );
 };
