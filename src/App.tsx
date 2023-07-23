@@ -3,9 +3,9 @@ import { useState, useEffect, useRef } from "react";
 import { unpkgPathPlugin } from "./plugins/unpgk-path-plugin";
 
 const App: React.FC = () => {
+  const ref = useRef<esbuild.Service>();
   const [input, setInput] = useState("");
   const [code, setCode] = useState<esbuild.OutputFile[]>([]);
-  const ref = useRef<esbuild.Service>();
 
   const startService = async () => {
     ref.current = await esbuild.startService({
@@ -18,21 +18,28 @@ const App: React.FC = () => {
     startService().catch((err) => console.error(err));
   }, []);
 
-  const onClick = async () => {
-    if (!ref.current) {
-      return;
-    }
+  const onClick = () => {
+    void (async () => {
+      if (!ref.current) {
+        return;
+      }
 
-    const result = await ref.current.build({
-      entryPoints: ["index.js"],
-      bundle: true,
-      write: false,
-      plugins: [unpkgPathPlugin()],
-    });
+      const env = ["process", "env", "NODE_ENV"].join(".");
+      const result = await ref.current.build({
+        entryPoints: ["index.js"],
+        bundle: true,
+        write: false,
+        plugins: [unpkgPathPlugin(input)],
+        define: {
+          [env]: '"production"',
+          global: "window",
+        },
+      });
 
-    console.log(result);
+      console.log(result);
 
-    setCode(result.outputFiles);
+      setCode(result.outputFiles);
+    })();
   };
 
   return (
