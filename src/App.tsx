@@ -1,6 +1,7 @@
 import * as esbuild from "esbuild-wasm";
 import { useState, useEffect, useRef } from "react";
 import { unpkgPathPlugin } from "./plugins/unpgk-path-plugin";
+import { fetchPlugin } from "./plugins/fetch-plugin";
 
 const App: React.FC = () => {
   const ref = useRef<esbuild.Service>();
@@ -29,14 +30,12 @@ const App: React.FC = () => {
         entryPoints: ["index.js"],
         bundle: true,
         write: false,
-        plugins: [unpkgPathPlugin(input)],
+        plugins: [unpkgPathPlugin(), fetchPlugin(input)],
         define: {
           [env]: '"production"',
           global: "window",
         },
       });
-
-      console.log(result);
 
       setCode(result.outputFiles);
     })();
