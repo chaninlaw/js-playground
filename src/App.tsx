@@ -1,45 +1,68 @@
-import * as esbuild from "esbuild-wasm";
-import { useState, useEffect, useRef } from "react";
-import { unpkgPathPlugin } from "./plugins/unpgk-path-plugin";
-import { fetchPlugin } from "./plugins/fetch-plugin";
+import * as esbuild from 'esbuild-wasm'
+import { useState, useEffect, useRef } from 'react'
+import { unpkgPathPlugin } from './plugins/unpgk-path-plugin'
+import { fetchPlugin } from './plugins/fetch-plugin'
 
 const App: React.FC = () => {
-  const ref = useRef<esbuild.Service>();
-  const [input, setInput] = useState("");
-  const [code, setCode] = useState<esbuild.OutputFile[]>([]);
+  const ref = useRef<esbuild.Service>()
+  const iframe = useRef<any>()
+  const [input, setInput] = useState('')
 
   const startService = async () => {
     ref.current = await esbuild.startService({
       worker: true,
-      wasmURL: "/esbuild.wasm",
-    });
-  };
+      wasmURL: 'https://unpkg.com/esbuild-wasm@0.8.27/esbuild.wasm',
+    })
+  }
 
   useEffect(() => {
-    startService().catch((err) => console.error(err));
-  }, []);
+    startService().catch((err) => console.error(err))
+  }, [])
 
   const onClick = () => {
     void (async () => {
       if (!ref.current) {
-        return;
+        return
       }
 
-      const env = ["process", "env", "NODE_ENV"].join(".");
+      iframe.current.srcdoc = html
+
+      const env = ['process', 'env', 'NODE_ENV'].join('.')
       const result = await ref.current.build({
-        entryPoints: ["index.js"],
+        entryPoints: ['index.js'],
         bundle: true,
         write: false,
         plugins: [unpkgPathPlugin(), fetchPlugin(input)],
         define: {
           [env]: '"production"',
-          global: "window",
+          global: 'window',
         },
-      });
+      })
 
-      setCode(result.outputFiles);
-    })();
-  };
+      // setCode(result.outputFiles[0].text)
+      iframe.current.contentWindow.postMessage(result.outputFiles[0].text, '*')
+    })()
+  }
+
+  const html = `
+  <html>
+    <head></head>
+    <body>
+      <div id="root"></div>
+      <script>
+        window.addEventListener("message", (event) => {
+          try {
+          eval(event.data);
+          } catch (err) {
+            const root = document.querySelector('#root');
+            root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
+            console.error(err);
+          }
+        }, false)
+      </script>
+    </body>
+  </html>
+  `
 
   return (
     <>
@@ -52,13 +75,14 @@ const App: React.FC = () => {
       <div>
         <button onClick={onClick}>Submit</button>
       </div>
-      <pre>
-        {code.map((item) => {
-          return <div key={item.path}>{item.text}</div>;
-        })}
-      </pre>
+      <iframe
+        title="preview"
+        ref={iframe}
+        sandbox="allow-scripts"
+        srcDoc={html}
+      />
     </>
-  );
-};
+  )
+}
 
-export default App;
+export default App

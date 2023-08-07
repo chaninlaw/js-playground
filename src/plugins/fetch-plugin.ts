@@ -53,14 +53,6 @@ export const fetchPlugin = (inputCode: string) => {
       })
 
       build.onLoad({ filter: /.*/ }, async (args) => {
-        const cachedResult = await fileCache.getItem<esbuild.OnLoadResult>(
-          args.path
-        )
-        // if already fetched the package
-        if (cachedResult) {
-          return cachedResult
-        }
-
         const res: { data: string; request: XMLHttpRequest } = await axios.get(
           args.path
         )
