@@ -10,18 +10,30 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@monaco-editor/react": "3.7.5",
+    "@babel/parser": "^7.22.10",
+    "@babel/traverse": "^7.22.10",
+    "@monaco-editor/react": "^4.5.1",
+    "@types/babel__traverse": "^7.20.1",
+    "@types/jscodeshift": "0.7.2",
+    "@types/react-resizable": "3.0.2",
+    "@uiw/react-md-editor": "2.1.1",
     "axios": "^1.4.0",
+    "bulmaswatch": "^0.8.1",
     "esbuild-wasm": "0.8.27",
+    "install": "^0.13.0",
+    "jscodeshift": "0.11.0",
     "localforage": "^1.10.0",
     "monaco-editor": "^0.41.0",
+    "monaco-jsx-highlighter": "^2.0.4",
     "prettier": "^2.2.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-resizable": "3.0.4",
+    "styled-components": "^6.0.7"
   },
   "devDependencies": {
-    "@types/prettier": "^3.0.0",
+    "@types/prettier": "^2.7.3",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@typescript-eslint/eslint-plugin": "^5.61.0",

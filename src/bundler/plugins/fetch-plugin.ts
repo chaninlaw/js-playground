@@ -1,5 +1,5 @@
 import * as esbuild from 'esbuild-wasm'
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios from 'axios'
 import localforage from 'localforage'
 
 const fileCache = localforage.createInstance({
@@ -28,8 +28,12 @@ export const fetchPlugin = (inputCode: string) => {
       })
 
       build.onLoad({ filter: /.css$/ }, async (args) => {
-        const { data, request }: { data: string; request: XMLHttpRequest } =
-          await axios.get(args.path)
+        const {
+          data,
+          request,
+        }: { data: string; request: XMLHttpRequest } = await axios.get(
+          args.path
+        )
         const escaped = data
           .replace(/\n/g, '')
           .replace(/"/g, '\\"')
