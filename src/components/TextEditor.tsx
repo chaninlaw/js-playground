@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import MDEditor from '@uiw/react-md-editor'
 import styled from 'styled-components'
+import type { Cell } from '../state'
+import { useActions } from '../hooks/useAcions'
 
 const StyledMDEditor = styled(MDEditor)`
   &.w-md-editor .title {
@@ -72,12 +74,16 @@ const StyledMDEditor = styled(MDEditor)`
   }
 `
 
-interface Props {}
+interface TextEditorProps {
+  cell: Cell
+}
 
-const TextEditor: React.FC<Props> = ({}) => {
+const defaultContent = '# #Click to edit'
+
+const TextEditor: React.FC<TextEditorProps> = ({ cell }) => {
   const mdRef = useRef<HTMLDivElement | null>(null)
   const [editing, setEditing] = useState(false)
-  const [value, setValue] = useState<string | undefined>('# Start typing here.')
+  const { updateCell } = useActions()
 
   useEffect(() => {
     const listener = (event: MouseEvent) => {
@@ -99,7 +105,10 @@ const TextEditor: React.FC<Props> = ({}) => {
   if (editing) {
     return (
       <div ref={mdRef}>
-        <StyledMDEditor value={value} onChange={setValue} />
+        <StyledMDEditor
+          value={cell.content}
+          onChange={(v) => updateCell(cell.id, v || '')}
+        />
       </div>
     )
   }
@@ -108,7 +117,7 @@ const TextEditor: React.FC<Props> = ({}) => {
     <div className="card" onClick={() => setEditing(true)}>
       <MDEditor.Markdown
         className="card-content"
-        source={value ? value : '# Start typing here.'}
+        source={cell.content || defaultContent}
       />
     </div>
   )

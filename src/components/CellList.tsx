@@ -1,11 +1,16 @@
-import React from 'react'
 import { useTypedSelected } from '../hooks/useTypedSelector'
+import CellListItem from './CellListItem'
 
-interface Props {}
+const CellList: React.FC = () => {
+  const cells = useTypedSelected(({ cells: { order, data } }) =>
+    order.map((id) => data[id])
+  )
 
-const CellList: React.FC<Props> = (props) => {
-  useTypedSelected((state) => state)
-  return <div>CellList</div>
+  const renderedCells = cells.map((cell) => (
+    <CellListItem key={cell.id} cell={cell} />
+  ))
+
+  return renderedCells
 }
 
 export default CellList
