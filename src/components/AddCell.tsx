@@ -49,19 +49,19 @@ const StyledAddCell = styled.div<StyledProps>`
 `
 
 interface Props {
-  nextCellId: string | null
+  previousCellId: string | null
   visible?: boolean
 }
 
-const AddCell: React.FC<Props> = ({ nextCellId, visible = false }) => {
-  const { insertCellBefore } = useActions()
+const AddCell: React.FC<Props> = ({ previousCellId, visible = false }) => {
+  const { insertCellAfter } = useActions()
 
   return (
     <StyledAddCell visible={visible}>
       <AddButtons visible={visible}>
         <button
           className="button is-rounded is-primary is-small"
-          onClick={() => insertCellBefore(nextCellId, 'code')}
+          onClick={() => insertCellAfter(previousCellId, 'code')}
         >
           <span className="icon is-small">
             <i className="fas fa-plus" />
@@ -70,7 +70,7 @@ const AddCell: React.FC<Props> = ({ nextCellId, visible = false }) => {
         </button>
         <button
           className="button is-rounded is-primary is-small"
-          onClick={() => insertCellBefore(nextCellId, 'text')}
+          onClick={() => insertCellAfter(previousCellId, 'text')}
         >
           <span className="icon is-small">
             <i className="fas fa-plus" />
