@@ -1,4 +1,3 @@
-import 'bulmaswatch/superhero/bulmaswatch.min.css'
 import { useState, useEffect } from 'react'
 import CodeEditor from './CodeEditor'
 import Preview from './Preview'
@@ -6,6 +5,13 @@ import bundle from '../bundler'
 import Resizable from './Resizable'
 import type { Cell } from '../state'
 import { useActions } from '../hooks/useAcions'
+import styled from 'styled-components'
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+`
 interface CodeCellProps {
   cell: Cell
 }
@@ -27,7 +33,7 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
 
   return (
     <Resizable direction="vertical">
-      <div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
+      <Row>
         <Resizable direction="horizontal">
           <CodeEditor
             initialValue={cell.content}
@@ -35,7 +41,7 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
           />
         </Resizable>
         <Preview code={code} bundlingStatus={error} />
-      </div>
+      </Row>
     </Resizable>
   )
 }
