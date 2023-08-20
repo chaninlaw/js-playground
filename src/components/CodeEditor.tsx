@@ -33,15 +33,13 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
-  const editorRef = useRef<editor.IStandaloneCodeEditor>()
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
 
   const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor
-    editor.getModel()?.updateOptions({ tabSize: 2 })
-    editor.onDidChangeModelContent(() => {
-      onChange(editor.getValue())
-    })
-    editor.updateOptions({ tabSize: 2 })
+    // editor.onDidChangeModelContent(() => {
+    //   onChange(editor.getValue())
+    // })
   }
 
   const onFormatClick = () => {
@@ -72,9 +70,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
           Format
         </button>
         <MonacoEditor
-          // editorDidMount={handleEditorDidMount}
           onMount={handleEditorDidMount}
           value={initialValue}
+          onChange={(value) => onChange(value ?? '')}
           height="100%"
           language="javascript"
           theme="vs-dark"
@@ -87,6 +85,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
             fontSize: 16,
             scrollBeyondLastLine: false,
             automaticLayout: true,
+            tabSize: 2,
           }}
         />
       </div>

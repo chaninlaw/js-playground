@@ -3,13 +3,13 @@ import { useActions } from '../hooks/useAcions'
 import styled from 'styled-components'
 
 interface StyledProps {
-  visible: boolean
+  $visible: boolean
 }
 
 const AddButtons = styled.div<StyledProps>`
   display: flex;
   justify-content: center;
-  opacity: ${(props) => (props.visible ? 1 : 0)};
+  opacity: ${(props) => (props.$visible ? 1 : 0)};
   transition: opacity 0.3s ease-in 0.2s;
 
   &:hover {
@@ -43,7 +43,7 @@ const StyledAddCell = styled.div<StyledProps>`
 
   &:hover {
     ${Divider} {
-      opacity: ${(props) => (props.visible ? 0.2 : 0.5)};
+      opacity: ${(props) => (props.$visible ? 0.2 : 0.5)};
     }
   }
 `
@@ -57,8 +57,8 @@ const AddCell: React.FC<Props> = ({ previousCellId, visible = false }) => {
   const { insertCellAfter } = useActions()
 
   return (
-    <StyledAddCell visible={visible}>
-      <AddButtons visible={visible}>
+    <StyledAddCell $visible={visible}>
+      <AddButtons $visible={visible}>
         <button
           className="button is-rounded is-primary is-small"
           onClick={() => insertCellAfter(previousCellId, 'code')}

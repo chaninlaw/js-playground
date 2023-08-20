@@ -49,7 +49,7 @@ const html = `
           handleError(event.error);
         })
 
-        window.addEventListener("message", (event) => {
+        window.addEventListener('message', (event) => {
           try {
             eval(event.data);
           } catch (err) {
@@ -66,11 +66,11 @@ const Preview: React.FC<Props> = ({ code, bundlingStatus }) => {
 
   useEffect(() => {
     if (!iframeRef.current) return
-
     iframeRef.current.srcdoc = html
+
     const timer = setTimeout(() => {
       iframeRef.current?.contentWindow?.postMessage(code, '*')
-    }, 10)
+    }, 50)
 
     return () => clearTimeout(timer)
   }, [code])
