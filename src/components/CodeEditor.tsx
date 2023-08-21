@@ -2,8 +2,8 @@ import { useRef } from 'react'
 import MonacoEditor, { OnMount } from '@monaco-editor/react'
 import prettier from 'prettier'
 import parser from 'prettier/parser-babel'
-import { editor } from 'monaco-editor'
 import styled from 'styled-components'
+import { editor } from 'monaco-editor'
 
 const CodeEditorContainer = styled.div`
   width: calc(100% - 10px);
@@ -32,32 +32,36 @@ interface CodeEditorProps {
   onChange: (value: string) => void
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
+const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, initialValue }) => {
+  const editorRef = useRef<editor.IStandaloneCodeEditor>()
 
-  const handleEditorDidMount: OnMount = (editor) => {
+  const onEditorDidMount: OnMount = (editor: editor.IStandaloneCodeEditor) => {
     editorRef.current = editor
-    // editor.onDidChangeModelContent(() => {
-    //   onChange(editor.getValue())
-    // })
+
+    editor.onDidChangeModelContent(() => {
+      onChange(editor.getModel()!.getValue())
+    })
+
+    editor.updateOptions({ tabSize: 2 })
   }
 
   const onFormatClick = () => {
-    const text = editorRef.current?.getModel()?.getValue()
+    // get current value from editor
+    const unformatted: string = editorRef.current!.getModel()!.getValue()
 
-    if (text) {
-      const formatted = prettier
-        .format(text, {
-          parser: 'babel',
-          plugins: [parser],
-          useTabs: false,
-          semi: true,
-          singleQuote: true,
-        })
-        .replace(/\n$/, '')
+    // format that value
+    const formatted = prettier
+      .format(unformatted, {
+        parser: 'babel',
+        plugins: [parser],
+        useTabs: false,
+        semi: true,
+        singleQuote: true,
+      })
+      .replace(/\n$/, '')
 
-      editorRef.current?.setValue(formatted)
-    }
+    // set the formatted value back in the editor
+    editorRef.current?.setValue(formatted)
   }
 
   return (
@@ -70,12 +74,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
           Format
         </button>
         <MonacoEditor
-          onMount={handleEditorDidMount}
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          onMount={onEditorDidMount}
           value={initialValue}
-          onChange={(value) => onChange(value ?? '')}
-          height="100%"
-          language="javascript"
           theme="vs-dark"
+          language="javascript"
+          height="100%"
           options={{
             wordWrap: 'on',
             minimap: { enabled: false },
@@ -85,7 +89,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
             fontSize: 16,
             scrollBeyondLastLine: false,
             automaticLayout: true,
-            tabSize: 2,
           }}
         />
       </div>

@@ -1,10 +1,10 @@
 import React from 'react'
-import { useTypedSelected } from '../hooks/useTypedSelector'
+import { useTypedSelector } from '../hooks/useTypedSelector'
 import AddCell from './AddCell'
 import CellListItem from './CellListItem'
 
 const CellList: React.FC = () => {
-  const cells = useTypedSelected(({ cells: { order, data } }) =>
+  const cells = useTypedSelector(({ cells: { order, data } }) =>
     order.map((id) => data[id])
   )
 
