@@ -2,6 +2,15 @@ import React from 'react'
 import { useTypedSelector } from '../hooks/useTypedSelector'
 import AddCell from './AddCell'
 import CellListItem from './CellListItem'
+import styled from 'styled-components'
+
+const StyledCellList = styled.div`
+  margin: 0 25px 10vh 0;
+
+  .react-draggable-transparent-selection & {
+    margin-bottom: 100vh;
+  }
+`
 
 const CellList: React.FC = () => {
   const cells = useTypedSelector(({ cells: { order, data } }) =>
@@ -16,10 +25,10 @@ const CellList: React.FC = () => {
   ))
 
   return (
-    <>
+    <StyledCellList>
       <AddCell visible={true} previousCellId={null} />
       {renderedCells}
-    </>
+    </StyledCellList>
   )
 }
 

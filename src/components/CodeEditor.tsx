@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import MonacoEditor, { OnMount } from '@monaco-editor/react'
 import prettier from 'prettier'
 import parser from 'prettier/parser-babel'
@@ -35,15 +35,49 @@ interface CodeEditorProps {
 const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, initialValue }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor>()
 
-  const onEditorDidMount: OnMount = (editor: editor.IStandaloneCodeEditor) => {
-    editorRef.current = editor
+  const activateMonacoJSXHighlighter = async (monacoEditor, monaco) => {
+    const { default: traverse } = await import('@babel/traverse')
+    const { parse } = await import('@babel/parser')
+    const { default: MonacoJSXHighlighter } = await import(
+      'monaco-jsx-highlighter'
+    )
 
-    editor.onDidChangeModelContent(() => {
-      onChange(editor.getModel()!.getValue())
-    })
+    const babelParse = (code) =>
+      parse(code, {
+        sourceType: 'module',
+        plugins: ['jsx'],
+        errorRecovery: true,
+      })
 
-    editor.updateOptions({ tabSize: 2 })
+    const monacoJSXHighlighter = new MonacoJSXHighlighter(
+      monaco,
+      babelParse,
+      traverse,
+      monacoEditor()
+    )
+
+    monacoJSXHighlighter.highlightOnDidChangeModelContent()
+    monacoJSXHighlighter.addJSXCommentCommand()
+
+    return monacoJSXHighlighter
   }
+
+  const onEditorDidMount: OnMount = useCallback(
+    (monacoEditor: editor.IStandaloneCodeEditor, monaco) => {
+      activateMonacoJSXHighlighter(monacoEditor, monaco)
+        .then((monacoJSXHighlighterRefCurrent) => {
+          editorRef.current = monacoJSXHighlighterRefCurrent
+        })
+        .catch((e) => {})
+
+      editorRef.current = monacoEditor
+
+      monacoEditor.onDidChangeModelContent(() => {
+        onChange(monacoEditor.getModel()!.getValue())
+      })
+    },
+    []
+  )
 
   const onFormatClick = () => {
     // get current value from editor
@@ -89,6 +123,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, initialValue }) => {
             fontSize: 16,
             scrollBeyondLastLine: false,
             automaticLayout: true,
+            tabSize: 2,
           }}
         />
       </div>

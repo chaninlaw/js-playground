@@ -5,6 +5,7 @@ import Resizable from './Resizable'
 import type { Cell } from '../state'
 import { useActions } from '../hooks/useAcions'
 import { useTypedSelector } from '../hooks/useTypedSelector'
+import { useCumulativeCode } from '../hooks/useCumulativeCode'
 import styled from 'styled-components'
 
 const Row = styled.div`
@@ -47,40 +48,19 @@ interface CodeCellProps {
 const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   const { updateCell, createBundle } = useActions()
   const bundle = useTypedSelector((state) => state.bundles[cell.id])
-  const cumulativeCode = useTypedSelector((state) => {
-    const { data, order } = state.cells
-    const orderedCells = order.map((id) => data[id])
-
-    const cumulativeCode = [
-      `
-        const show = (value) => {
-          document.querySelector('#root').innerHTML = value;
-        };
-      `,
-    ]
-
-    for (const c of orderedCells) {
-      if (c.type === 'code') {
-        cumulativeCode.push(c.content)
-      }
-      if (c.id === cell.id) {
-        break
-      }
-    }
-    return cumulativeCode
-  })
+  const cumulativeCode = useCumulativeCode(cell.id)
 
   useEffect(() => {
-    if (!bundle) createBundle(cell.id, cumulativeCode.join('\n'))
+    if (!bundle) createBundle(cell.id, cumulativeCode)
 
     const timer = setTimeout(() => {
-      createBundle(cell.id, cumulativeCode.join('\n'))
+      createBundle(cell.id, cumulativeCode)
     }, 750)
 
     return () => clearTimeout(timer)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cumulativeCode.join('\n'), cell.id, createBundle])
+  }, [cumulativeCode, cell.id, createBundle])
 
   return (
     <Resizable direction="vertical">
