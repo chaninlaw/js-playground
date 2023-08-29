@@ -13,8 +13,12 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: true,
+    project: ["tsconfig.json", "tsconfig.node.json"],
     tsconfigRootDir: __dirname,
+    ignorePatterns: [
+      '/lib/**/*', // Ignore built files.
+      '**/*.js',
+    ],
   },
   plugins: ['react-refresh'],
   rules: {
