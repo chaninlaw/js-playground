@@ -35,41 +35,8 @@ interface CodeEditorProps {
 const CodeEditor: React.FC<CodeEditorProps> = ({ onChange, initialValue }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor>()
 
-  const activateMonacoJSXHighlighter = async (monacoEditor, monaco) => {
-    const { default: traverse } = await import('@babel/traverse')
-    const { parse } = await import('@babel/parser')
-    const { default: MonacoJSXHighlighter } = await import(
-      'monaco-jsx-highlighter'
-    )
-
-    const babelParse = (code) =>
-      parse(code, {
-        sourceType: 'module',
-        plugins: ['jsx'],
-        errorRecovery: true,
-      })
-
-    const monacoJSXHighlighter = new MonacoJSXHighlighter(
-      monaco,
-      babelParse,
-      traverse,
-      monacoEditor()
-    )
-
-    monacoJSXHighlighter.highlightOnDidChangeModelContent()
-    monacoJSXHighlighter.addJSXCommentCommand()
-
-    return monacoJSXHighlighter
-  }
-
   const onEditorDidMount: OnMount = useCallback(
-    (monacoEditor: editor.IStandaloneCodeEditor, monaco) => {
-      activateMonacoJSXHighlighter(monacoEditor, monaco)
-        .then((monacoJSXHighlighterRefCurrent) => {
-          editorRef.current = monacoJSXHighlighterRefCurrent
-        })
-        .catch((e) => {})
-
+    (monacoEditor: editor.IStandaloneCodeEditor) => {
       editorRef.current = monacoEditor
 
       monacoEditor.onDidChangeModelContent(() => {
