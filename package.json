@@ -1,9 +1,8 @@
 {
-  "name": "local-client",
+  "name": "jsplayground",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://chaninlaw.github.io/js-playground",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

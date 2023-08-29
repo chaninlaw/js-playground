@@ -9,7 +9,7 @@ const el = document.getElementById('root')
 
 createRoot(el!).render(
   <Provider store={store}>
-    <BrowserRouter basename={import.meta.env.DEV !== 'production' ? '/' : '/js-playground/'}>
+    <BrowserRouter basename={import.meta.env.DEV ? '/' : '/js-playground/'}>
     <App />
     </BrowserRouter>
   </Provider>
