@@ -5,7 +5,7 @@
   "type": "module",
   "homepage": "https://chaninlaw.github.io/js-playground",
   "scripts": {
-    "start": "vite",
+    "dev": "vite",
     "build": "tsc && vite build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
@@ -37,11 +37,13 @@
     "react-dom": "^18.2.0",
     "react-redux": "8.1.2",
     "react-resizable": "3.0.4",
+    "react-router-dom": "^6.15.0",
     "redux": "4.2.1",
     "redux-thunk": "2.3.0",
     "styled-components": "^6.0.7"
   },
   "devDependencies": {
+    "@types/node": "^20.5.7",
     "@types/prettier": "^2.7.3",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
