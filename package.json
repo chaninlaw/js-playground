@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc && vite build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
@@ -36,7 +36,6 @@
     "react-dom": "^18.2.0",
     "react-redux": "8.1.2",
     "react-resizable": "3.0.4",
-    "react-router-dom": "^6.15.0",
     "redux": "4.2.1",
     "redux-thunk": "2.3.0",
     "styled-components": "^6.0.7"
